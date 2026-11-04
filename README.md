@@ -61,7 +61,17 @@ dsh plugin --profile web add github:<你的用户名>/dsh-claude-theme-lite
 dsh plugin --profile web add file:/path/to/dsh-claude-theme-lite
 ```
 
-### 2. 在 profile patch 里挂上它
+### 2. 挂载它（二选一）
+
+**方式 A：写进 profile 的 bundles 列表**（推荐，`cordis.patch.yml` 会自动插入插件行）
+
+`$DSH_HOME/profiles/<profile>/package.json`：
+
+```json
+"dsh": { "profile": { "bundles": [ "...", "claude-theme-lite" ] } }
+```
+
+**方式 B：手动插入一行**
 
 `$DSH_HOME/profiles/<profile>/cordis.patch.yml`：
 
