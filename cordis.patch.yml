@@ -1,0 +1,5 @@
+# Host-only Claude theme: injects two stylesheets into index.html.
+# The browser half is intentionally absent — nothing is loaded as JS.
+- insert:
+    - id: claude-theme-lite
+      name: 'claude-theme-lite'

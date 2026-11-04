@@ -1,0 +1,31 @@
+{
+  "name": "claude-theme-lite",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Host-only Claude theme for the DeepSeek Harness Web GUI: two stylesheets plus four fonts injected into index.html, with zero client-side JavaScript. Built for low-end machines where the full dsh-claude-style skin is too heavy.",
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_LICENSES.md"
+  ],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "dsh-plugin",
+    "theme",
+    "claude",
+    "css",
+    "zero-js",
+    "low-end"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
