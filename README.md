@@ -55,7 +55,7 @@
 
 ```bash
 # 从 GitHub
-dsh plugin --profile web add github:<你的用户名>/dsh-claude-theme-lite
+dsh plugin --profile web add github:poweriverHN/claude-theme-lite
 
 # 或从本地目录
 dsh plugin --profile web add file:/path/to/dsh-claude-theme-lite
@@ -140,7 +140,7 @@ cream canvas, coral accent, serif reading text and a set of compositor-friendly
 micro-animations. Optional scroll-driven extras (reading progress bar, composer
 "away from bottom" ring) require Chromium 115+ and silently do nothing elsewhere.
 
-Install with `dsh plugin --profile web add github:<user>/dsh-claude-theme-lite`,
+Install with `dsh plugin --profile web add github:poweriverHN/claude-theme-lite`,
 then add the insert row above to your profile patch and disable
 `ui-skin-claude-style`. MIT licensed; the stylesheets are derived from the MIT
 `claude` skin by dsh-market.com and the bundled fonts are OFL 1.1.
