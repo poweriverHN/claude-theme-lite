@@ -27,5 +27,14 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
+  },
+  "author": "poweriverHN <poweriver@163.com>",
+  "homepage": "https://github.com/poweriverHN/claude-theme-lite#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poweriverHN/claude-theme-lite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/poweriverHN/claude-theme-lite/issues"
   }
 }
