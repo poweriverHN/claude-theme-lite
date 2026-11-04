@@ -647,3 +647,84 @@ button[class*="_iconButton"]:active > svg {
     transform: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * 15. 侧栏按钮统一反馈 / 头像与角标微动 / 复制按钮按压
+ *     宿主的 hover 底色是 --dsw-alias-interactive-bg-hover（5% 黑），
+ *     在米色画布上偏淡；这里统一换成和「新会话」同档的暖灰，全侧栏一个手感。
+ * ------------------------------------------------------------------------- */
+
+/* 侧栏图标按钮（收起/展开、Plugins、更多…）与面板行 */
+html body button[class*="_iconButton"],
+html body [class*="_panelRow"] {
+  transition: background-color 140ms ease, color 140ms ease;
+}
+@media (hover: hover) {
+  html body button[class*="_iconButton"]:hover,
+  html body [class*="_panelRow"]:hover {
+    background: var(--cl-raised-hover);
+  }
+}
+html body button[class*="_iconButton"]:active,
+html body [class*="_panelRow"]:active {
+  background: var(--cl-raised-active);
+}
+
+/* 账号头像：鼠标停在账号按钮上时轻微放大，按下回缩。
+   `[data-avatar-status]` 是宿主头像元素上的稳定属性，用它找按钮，
+   比自己拼 _trigger 之类通用后缀安全。 */
+[data-avatar-status] {
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  button:has([data-avatar-status]):hover [data-avatar-status] {
+    transform: scale(1.08);
+  }
+}
+button:has([data-avatar-status]):active [data-avatar-status] {
+  transform: scale(0.94);
+}
+
+/* 图标按钮内的角标：随按钮 hover 轻轻一跳，提示这里还有东西 */
+button[class*="_iconButton"] [class*="_badge"] {
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  button[class*="_iconButton"]:hover [class*="_badge"] {
+    transform: translateY(-1px) scale(1.12);
+  }
+}
+
+/* 代码块右上角的复制按钮：原来没有任何悬停/按下反馈，点下去像没反应。
+   `data-code-block-banner` 是宿主 CodeBlock 的稳定属性。 */
+[data-code-block-banner] button {
+  padding: 2px 6px;
+  border-radius: var(--cl-radius-md);
+  transition: background-color 120ms ease, transform 100ms ease;
+}
+@media (hover: hover) {
+  [data-code-block-banner] button:hover {
+    background: color-mix(in srgb, var(--cl-coral) 16%, transparent);
+    color: var(--cl-coral);
+  }
+}
+[data-code-block-banner] button:active {
+  transform: scale(0.94);
+  background: color-mix(in srgb, var(--cl-coral) 24%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body button[class*="_iconButton"],
+  html body [class*="_panelRow"],
+  [data-avatar-status],
+  button[class*="_iconButton"] [class*="_badge"],
+  [data-code-block-banner] button {
+    transition: none;
+  }
+  button:has([data-avatar-status]):hover [data-avatar-status],
+  button:has([data-avatar-status]):active [data-avatar-status],
+  button[class*="_iconButton"]:hover [class*="_badge"],
+  [data-code-block-banner] button:active {
+    transform: none;
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "claude-theme-lite",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Host-only Claude theme for the DeepSeek Harness Web GUI: two stylesheets plus four fonts injected into index.html, with zero client-side JavaScript. Built for low-end machines where the full dsh-claude-style skin is too heavy.",
   "type": "module",
