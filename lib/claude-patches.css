@@ -43,6 +43,10 @@ html body {
   --cl-card: #efe9de;
   --cl-ink: #141413;
   --cl-hairline: #e6dfd8;
+  /* 侧栏「新会话」等抬高按钮的 hover / 按下底色：宿主的
+     elevated-fill(#ffffff) → floating-hover(#f5f0e8) 在米色画布上几乎看不出变化 */
+  --cl-raised-hover: #ece5da;
+  --cl-raised-active: #ded5c7;
   --cl-radius-md: 8px;
   --cl-radius-lg: 12px;
   --cl-radius-xl: 16px;
@@ -56,6 +60,8 @@ html body[data-ds-dark-theme] {
   --cl-card: #252320;
   --cl-ink: #faf9f5;
   --cl-hairline: #ffffff1f;
+  --cl-raised-hover: #37332e;
+  --cl-raised-active: #403b35;
 }
 
 /* ---------------------------------------------------------------------------
@@ -525,4 +531,119 @@ html body[data-ds-dark-theme] {
 /* Selected text picks up the Claude coral instead of the system blue. */
 ::selection {
   background: color-mix(in srgb, var(--dsw-alias-brand-primary) 26%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+ * 11. Phase entrances — 新会话页与切换会话的入场（一次性，零 JS）。
+ *     `data-phase` 是宿主对话主面板根上的稳定属性（只有 ConversationMainPanel 使用 hero/active/settling 这组值）：
+ *       hero     = 新会话页（有问候语与输入卡片）
+ *       settling = 会话载入中
+ *       active   = 会话已就绪
+ *     当属性从 settling 变成 active 时，元素「开始匹配」下面的规则，
+ *     浏览器会从头播放动画 —— 所以每次切换/打开会话都有一次淡入。
+ *     只动 opacity 与 transform，不碰布局；容器 transform 只在动画期间存在
+ *     （关键帧只写 from，结束后回落成 none），不会长期留下包含块影响 tooltip。
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* 新会话页：分件错开入场（先问候语、再输入卡片） */
+  @keyframes cl-hero-in {
+    from { opacity: 0; transform: translateY(40px) scale(0.945); }
+    60%  { opacity: 1; }
+  }
+  @keyframes cl-seat-in {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  }
+  @keyframes cl-chat-in {
+    from { opacity: 0; transform: translateY(26px) scale(0.988); }
+  }
+
+  /* 新会话页改成「分件错开」而不是整块平移：整块一起动时页面没有参照物，
+     看上去几乎察觉不到；让问候语和输入卡片先后各走一段，才有真的升起感。
+     `_headline` 是宿主 HeroShell 的 CSS Module 语义后缀（形如 xxx_headline）。 */
+  [data-phase='hero'] [class*='_headline'] {
+    animation: cl-hero-in 560ms cubic-bezier(0.19, 1, 0.22, 1) 40ms both;
+  }
+  [data-phase='hero'] [data-composer-seat] {
+    animation: cl-seat-in 520ms cubic-bezier(0.19, 1, 0.22, 1) 150ms both;
+  }
+
+  /* 打开 / 切换会话：内容从下方升起 + 轻微放大 */
+  [data-phase='active'] {
+    animation: cl-chat-in 420ms cubic-bezier(0.19, 1, 0.22, 1) both;
+  }
+}
+
+/* ── 2026-11-04：设置导航「侧边卡片」多出一个图标 ─────────────────────
+ * dsh-better-sidebar@0.28.2 为 0.1.x 的导航行画自绘图标（::before），并靠
+ * `> svg:first-child` 隐藏原生齿轮。DSH 0.2.x 把图标包进 <span class="navIcon">，
+ * 该选择器不再匹配，于是齿轮与自绘图标同时出现。这里只隐藏原生图标座，
+ * 保留 ::before；插件自身产物也已同步修正，重启后本规则即为冗余保险。 */
+[data-dsh-better-sidebar-settings-nav] > span:first-of-type {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * 12. 侧栏「新会话」按钮：hover 与按下反馈
+ *     宿主只把它从 button-elevated-fill(#ffffff) 换成
+ *     button-floating-hover(#f5f0e8) —— 在米色画布上这点差别肉眼几乎看不出，
+ *     于是这个按钮显得「点了没反应」。这里换成明显一档的暖灰（见 --cl-raised-*），
+ *     并把文字提亮到品牌色，两种反馈任取其一都够明显。
+ *     用 button 限定，避免命中外层同后缀的 span（_newSessionLabel 等）。
+ * ------------------------------------------------------------------------- */
+html body button[class*="_newSession"] {
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+@media (hover: hover) {
+  html body button[class*="_newSession"]:hover {
+    background: var(--cl-raised-hover);
+    color: var(--cl-coral);
+  }
+}
+
+html body button[class*="_newSession"]:active {
+  background: var(--cl-raised-active);
+  color: var(--cl-coral-active);
+}
+
+/* ---------------------------------------------------------------------------
+ * 13. 消息行悬停：在长对话里一眼定位"我正在看哪一条"
+ *     .dpb-cv > [data-chat-flow-kind] 是 perf-boost 的对话行；没有 perf-boost
+ *     时退化成任何带该属性的元素（属性是宿主自己写的，稳定）。
+ *     只改背景与左侧细条，不位移，长列表扫描时不抖。
+ * ------------------------------------------------------------------------- */
+.dpb-cv > [data-chat-flow-kind] {
+  transition: background-color 120ms ease;
+  border-radius: var(--cl-radius-lg);
+}
+.dpb-cv > [data-chat-flow-kind]:hover {
+  background: color-mix(in srgb, var(--cl-coral) 7%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+ * 14. 图标按钮悬停微动：只抬起图标本身，不动按钮盒子
+ *     用语义后缀挑：宿主 CSS Module 的类名形如 u5VEBa_iconButton / _flowItem，
+ *     后缀稳定。给 <svg> 挂 transform，不影响布局与命中区。
+ * ------------------------------------------------------------------------- */
+button[class*="_iconButton"] > svg {
+  transition: transform 140ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  button[class*="_iconButton"]:hover > svg {
+    transform: translateY(-1px) scale(1.06);
+  }
+}
+button[class*="_iconButton"]:active > svg {
+  transform: scale(0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dpb-cv > [data-chat-flow-kind],
+  button[class*="_iconButton"] > svg {
+    transition: none;
+  }
+  button[class*="_iconButton"]:hover > svg,
+  button[class*="_iconButton"]:active > svg {
+    transform: none;
+  }
 }
